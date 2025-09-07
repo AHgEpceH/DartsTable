@@ -14,6 +14,7 @@ import android.widget.Toast
 
 class GameProcess : AppCompatActivity() {
 
+
     private var lvFirstGamerScore: ListView? = null
     private var lvSecondGamerScore: ListView? = null
     private var lvThirdGamerScore: ListView? = null
@@ -69,6 +70,12 @@ class GameProcess : AppCompatActivity() {
         val adapter2 = ArrayAdapter(this, android.R.layout.simple_list_item_1, items2)
         lvSecondGamerScore!!.adapter = adapter2
 
+        val adapter3 = ArrayAdapter(this, android.R.layout.simple_list_item_1, items3)
+        lvThirdGamerScore!!.adapter = adapter3
+
+        val adapter4 = ArrayAdapter(this, android.R.layout.simple_list_item_1, items4)
+        lvFourthGamerScore!!.adapter = adapter4
+
         val intent = intent
 
         tvFirstGamerName!!.text = intent.getStringExtra("first").toString()
@@ -96,6 +103,20 @@ class GameProcess : AppCompatActivity() {
             //Toast.makeText(this, "Вы выбрали из ListView 2, chosenList: $chosenList", Toast.LENGTH_SHORT).show()
         }
 
+        lvThirdGamerScore!!.setOnItemClickListener{ _, _, _, _ ->
+            selectedListView  = lvThirdGamerScore
+
+            highlightSelectedPlayer(lvThirdGamerScore!!)
+            //Toast.makeText(this, "Вы выбрали из ListView 2, chosenList: $chosenList", Toast.LENGTH_SHORT).show()
+        }
+
+        lvFourthGamerScore!!.setOnItemClickListener{ _, _, _, _ ->
+            selectedListView  = lvFourthGamerScore
+
+            highlightSelectedPlayer(lvFourthGamerScore!!)
+            //Toast.makeText(this, "Вы выбрали из ListView 2, chosenList: $chosenList", Toast.LENGTH_SHORT).show()
+        }
+
         bMakeResult!!.setOnClickListener{
             subtractNumber()
             updateListViews()
@@ -107,8 +128,16 @@ class GameProcess : AppCompatActivity() {
         if (inputText.isNotEmpty() && selectedListView != null) {
             val numberToSubtract = inputText.toIntOrNull()
             if (numberToSubtract != null) {
-                val items = if (selectedListView == lvFirstGamerScore) items1 else items2
-                if (items.isNotEmpty()) {
+
+                val items = when (selectedListView) {
+                    lvFirstGamerScore -> items1
+                    lvSecondGamerScore -> items2
+                    lvThirdGamerScore -> items3
+                    lvFourthGamerScore -> items4
+                    else -> null
+                }
+
+                if (items!!.isNotEmpty()) {
                     val lastValue = items.filter { it != -1 }.lastOrNull()
 
                     if (lastValue != null) {
@@ -121,7 +150,16 @@ class GameProcess : AppCompatActivity() {
                         } else {
                             // Если результат стал равен нулю, игрок выигрывает
                             if (newValue == 0) {
-                                Toast.makeText(this, "Игрок ${if (selectedListView == lvFirstGamerScore) "1" else "2"} выиграл!", Toast.LENGTH_LONG).show()
+                                val playerNumber = when (selectedListView) {
+                                    lvFirstGamerScore -> "1"
+                                    lvSecondGamerScore -> "2"
+                                    lvThirdGamerScore -> "3"
+                                    lvFourthGamerScore -> "4"
+                                    else -> "неизвестный"
+                                }
+
+                                Toast.makeText(this, "Игрок $playerNumber выиграл!", Toast.LENGTH_LONG).show()
+                                //Toast.makeText(this, "Игрок ${if (selectedListView == lvFirstGamerScore) "1" else "2"} выиграл!", Toast.LENGTH_LONG).show()
                                 //resetGame() // Сбрасываем игру
                                 return
                             } else {
@@ -157,23 +195,37 @@ class GameProcess : AppCompatActivity() {
         lvSecondGamerScore?.adapter = adapter2
         lvSecondGamerScore?.deferNotifyDataSetChanged()
         lvSecondGamerScore?.setSelection(adapter2.count - 1)
+
+        val adapter3 = ArrayAdapter(this, android.R.layout.simple_list_item_1, items3.map { if (it == -1) "-" else it.toString() })
+        lvThirdGamerScore?.adapter = adapter3
+        lvThirdGamerScore?.deferNotifyDataSetChanged()
+        lvThirdGamerScore?.setSelection(adapter3.count - 1)
+
+        val adapter4 = ArrayAdapter(this, android.R.layout.simple_list_item_1, items4.map { if (it == -1) "-" else it.toString() })
+        lvFourthGamerScore?.adapter = adapter4
+        lvFourthGamerScore?.deferNotifyDataSetChanged()
+        lvFourthGamerScore?.setSelection(adapter4.count - 1)
     }
 
     private fun highlightSelectedPlayer(selectedListView: ListView) {
-        // Сбрасываем цвет для обоих TextView
-        tvFirstGamerName!!.setBackgroundColor(Color.TRANSPARENT)
-        tvFirstGamerName!!.setTextColor(Color.GREEN)
+        // Сопоставляем ListView с соответствующим TextView игрока
+        val playerViews = mapOf(
+            lvFirstGamerScore to tvFirstGamerName,
+            lvSecondGamerScore to tvSecondGamerName,
+            lvThirdGamerScore to tvThirdGamerName,
+            lvFourthGamerScore to tvFourthGamerName
+        )
 
-        tvSecondGamerName!!.setBackgroundColor(Color.TRANSPARENT)
-        tvSecondGamerName!!.setTextColor(Color.GREEN)
+        // Сбрасываем цвета для всех игроков
+        playerViews.values.forEach { textView ->
+            textView?.setBackgroundColor(Color.TRANSPARENT)
+            textView?.setTextColor(Color.BLACK)
+        }
 
-        // Выделяем выбранный игрока
-        if (selectedListView == lvFirstGamerScore) {
-            tvFirstGamerName!!.setBackgroundColor(Color.parseColor("#A8E6CF")) // Цвет фона для первого игрока
-            tvFirstGamerName!!.setTextColor(Color.BLACK) // Цвет текста для первого игрока
-        } else if (selectedListView == lvSecondGamerScore) {
-            tvSecondGamerName!!.setBackgroundColor(Color.parseColor("#A8E6CF")) // Цвет фона для второго игрока
-            tvSecondGamerName!!.setTextColor(Color.BLACK) // Цвет текста для второго игрока
+        // Выделяем выбранного игрока, если он есть в карте
+        playerViews[selectedListView]?.let { selectedTextView ->
+            selectedTextView.setBackgroundColor(Color.parseColor("#A8E6CF")) // Цвет фона выделения
+            selectedTextView.setTextColor(Color.BLACK) // Цвет текста выделения
         }
     }
 }
