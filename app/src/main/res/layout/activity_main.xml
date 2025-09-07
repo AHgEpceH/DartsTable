@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/et_first_gamer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="имя первого игрока"
+        android:textSize="30sp"
+        android:layout_marginTop="13dp"/>
+
+    <EditText
+        android:id="@+id/et_second_gamer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="имя второго игрока"
+        android:textSize="30sp"/>
+
+    <EditText
+        android:id="@+id/et_third_gamer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="имя третьего игрока"
+        android:textSize="30sp"/>
+
+    <EditText
+        android:id="@+id/et_fourth_gamer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="имя четвертого игрока"
+        android:textSize="30sp"/>
+
+    <Button
+        android:height="100dp"
+        android:id="@+id/b_start_game"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start"
+        android:layout_gravity="center"
+        android:layout_margin="8dp"/>
+
+
+</LinearLayout>
